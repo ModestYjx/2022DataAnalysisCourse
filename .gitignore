@@ -1,0 +1,13 @@
+/data/
+/.idea/misc.xml
+/.idea/vcs.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/DataAnalysisCourse.iml
+echo "# 2022DataAnalysisCourse" >> README.md
+
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:ModestYjx/2022DataAnalysisCourse.git
+git push -u origin main
