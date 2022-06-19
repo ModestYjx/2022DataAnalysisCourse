@@ -62,10 +62,10 @@ if __name__ == "__main__":
     # 拟合训练数据集
     model.fit(train_X, train_Y.values.ravel())
     print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_))
-    model = GradientBoostingClassifier(max_features=38, max_depth=40, min_samples_split=8, min_samples_leaf=3,
-                                       n_estimators=1200, learning_rate=0.05, subsample=0.95)
+    # model = GradientBoostingClassifier(max_features=38, max_depth=40, min_samples_split=8, min_samples_leaf=3,
+    #                                    n_estimators=1200, learning_rate=0.05, subsample=0.95)
     # 拟合训练集数据
-    model.fit(train_X, train_Y.values.ravel())
+    # model.fit(train_X, train_Y.values.ravel())
 
     # dotData = export_graphviz(model, out_file=None)
     # graph = pydotplus.graph_from_dot_data(dotData)

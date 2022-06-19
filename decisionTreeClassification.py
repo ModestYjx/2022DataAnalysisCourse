@@ -46,7 +46,6 @@ if __name__ == "__main__":
     param_grid1 = {'max_depth': range(30, 71, 10), 'min_samples_split': range(4, 9, 2)}
     param_grid2 = {'min_samples_split': range(4, 9, 2), 'min_samples_leaf': range(3, 12, 2)}
     model = GridSearchCV(DecisionTreeClassifier(splitter='random', max_features=38, max_depth=50, min_samples_split=6),
-
                          param_grid=param_grid2, cv=3)
 
     m, n = np.shape(train_X)
@@ -56,12 +55,12 @@ if __name__ == "__main__":
     print("p, q:\n", p, ",", q)
 
     # 拟合训练数据集
-    # model.fit(train_X, train_Y)
-    print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_))
-    model = DecisionTreeClassifier(splitter='random', max_features=38, max_depth=50, min_samples_split=6,
-                                   min_samples_leaf=2)
-    # 拟合训练集数据
     model.fit(train_X, train_Y)
+    print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_))
+    # model = DecisionTreeClassifier(splitter='random', max_features=38, max_depth=50, min_samples_split=6,
+    #                                min_samples_leaf=2)
+    # # 拟合训练集数据
+    # model.fit(train_X, train_Y)
 
     # dotData = export_graphviz(model, out_file=None)
     # graph = pydotplus.graph_from_dot_data(dotData)

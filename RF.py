@@ -43,13 +43,13 @@ if __name__ == "__main__":
     param_grid2 = {'max_depth': range(30, 71, 10), 'min_samples_split': range(4, 9, 2)}
     param_grid3 = {'min_samples_split': range(4, 9, 2), 'min_samples_leaf': range(3, 12, 2)}
     model = GridSearchCV(
-        estimator=RandomForestClassifier(max_features=90, n_estimators=1300, max_depth=30, min_samples_split=6),
+        estimator=RandomForestClassifier(max_features=38, n_estimators=1300, max_depth=30, min_samples_split=6),
         param_grid=param_grid3, cv=3)
     # 拟合训练数据集
     # model.fit(train_X, train_Y)
     # print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_))
-    model = RandomForestClassifier(max_features=38, n_estimators=1300, max_depth=30, min_samples_split=4,
-                                   min_samples_leaf=1)
+    # model = RandomForestClassifier(max_features=38, n_estimators=1300, max_depth=30, min_samples_split=4,
+    #                                min_samples_leaf=1)
     # 拟合训练数据集
     model.fit(train_X, train_Y.values.ravel())
     # 预测训练集

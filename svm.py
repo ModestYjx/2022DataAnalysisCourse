@@ -40,11 +40,11 @@ if __name__ == "__main__":
 
     print("\n**********测试LinearSVC类**********")
     t = time()
-    # model = GridSearchCV(LinearSVC(), param_grid={"C": np.logspace(-10, 0, 11)}, cv=5)
-    # model.fit(train_X, train_Y)
-    # print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_))
+    model = GridSearchCV(LinearSVC(), param_grid={"C": np.logspace(-10, 0, 11)}, cv=5)
+    model.fit(train_X, train_Y)
+    print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_))
 
-    model = LinearSVC(C=0.000001)
+    # model = LinearSVC(C=0.000001)
     # 拟合训练数据集
     model.fit(train_X, train_Y)
 
