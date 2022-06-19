@@ -43,7 +43,7 @@ if __name__ == "__main__":
     param_grid3 = {'min_samples_split': range(4, 9, 2), 'min_samples_leaf': range(3, 12, 2)}
     param_grid4 = {'subsample': np.arange(0.6, 1.0, 0.05)}
     model = GridSearchCV(
-        estimator=GradientBoostingClassifier(max_features=90, max_depth=40, min_samples_split=8, learning_rate=0.1,
+        estimator=GradientBoostingClassifier(max_features=38, max_depth=40, min_samples_split=8, learning_rate=0.1,
                                              n_estimators=1800),
         param_grid=param_grid4, cv=3)
 
@@ -59,10 +59,10 @@ if __name__ == "__main__":
     # 拟合训练数据集
     model.fit(train_X, train_Y.values.ravel())
     print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_))
-    model = GradientBoostingClassifier(max_features=90, max_depth=40, min_samples_split=8, min_samples_leaf=3,
+    model = GradientBoostingClassifier(max_features=38, max_depth=40, min_samples_split=8, min_samples_leaf=3,
                                        n_estimators=1200, learning_rate=0.05, subsample=0.95)
     # 拟合训练集数据
-    model.fit(train_X, train_Y.ravel())
+    model.fit(train_X, train_Y.values.ravel())
 
     # dotData = export_graphviz(model, out_file=None)
     # graph = pydotplus.graph_from_dot_data(dotData)
@@ -78,39 +78,39 @@ if __name__ == "__main__":
     print('训练集精确度: ', accuracy_score(train_Y, train_Y_hat))
 
     # 2. 预测测试集
-    # test_data_X, test_data_Y = getSplitFinacialData(test_data_path)
-    # test_data_Y_hat = model.predict(test_data_X)
-    #
-    # t1, t2 = np.shape(test_data_X)
-    # print("t1, t2:\n", p, ",", q)
-    #
-    # proba_Y = model.predict_proba(test_data_X)[:,1]
-    #
-    # auc = roc_auc_score(test_data_Y, proba_Y)
-    # print("decisition tree的AUC:", auc)
-    # print(classification_report(test_data_Y, test_data_Y_hat, digits=4))
-    #
-    # # p1, p2 = np.shape(proba_Y)
-    # # print("p1, p2:\n", p, ",", q)
-    #
-    # print("proba_Y:\n", proba_Y)
-    # print("proba_Y's length:\n", len(proba_Y))
-    # # score = model.score(test_X, test_Y)
-    # # print("score:", score)
-    #
-    # print('测试集精确度: ', accuracy_score(test_data_Y, test_data_Y_hat))
-    # print("总耗时:", time() - t, "秒")
-    #
-    # # 输出预测文件
-    # test_data = pd.DataFrame(pd.read_csv("data/test_data.csv"))
-    # label_data = pd.DataFrame({"predict_label": test_data_Y_hat, "probability": proba_Y})
-    # # label_data = pd.DataFrame({"predict_label": test_Y_hat})
-    # data = pd.concat([test_data, label_data], axis=1)
-    # data.to_csv("data/decision_tree_predict_test_data.csv", encoding="utf-8-sig", index=False)
-    #
-    #
-    # # 绘制ROC曲线
-    # n_class = len(np.unique(train_Y))
-    # roc.drawROC(n_class, test_data_Y, test_data_Y_hat)
-    #
-    # getAucPerMonth(gbdt_predict_test_data_path)
+    test_data_X, test_data_Y = getSplitFinacialData(test_data_path)
+    test_data_Y_hat = model.predict(test_data_X)
+
+    t1, t2 = np.shape(test_data_X)
+    print("t1, t2:\n", p, ",", q)
+
+    proba_Y = model.predict_proba(test_data_X)[:,1]
+
+    auc = roc_auc_score(test_data_Y, proba_Y)
+    print("decisition tree的AUC:", auc)
+    print(classification_report(test_data_Y, test_data_Y_hat, digits=4))
+
+    # p1, p2 = np.shape(proba_Y)
+    # print("p1, p2:\n", p, ",", q)
+
+    print("proba_Y:\n", proba_Y)
+    print("proba_Y's length:\n", len(proba_Y))
+    # score = model.score(test_X, test_Y)
+    # print("score:", score)
+
+    print('测试集精确度: ', accuracy_score(test_data_Y, test_data_Y_hat))
+    print("总耗时:", time() - t, "秒")
+
+    # 输出预测文件
+    test_data = pd.DataFrame(pd.read_csv("data/test_data.csv"))
+    label_data = pd.DataFrame({"predict_label": test_data_Y_hat, "probability": proba_Y})
+    # label_data = pd.DataFrame({"predict_label": test_Y_hat})
+    data = pd.concat([test_data, label_data], axis=1)
+    data.to_csv("data/decision_tree_predict_test_data.csv", encoding="utf-8-sig", index=False)
+
+
+    # 绘制ROC曲线
+    n_class = len(np.unique(train_Y))
+    roc.drawROC(n_class, test_data_Y, test_data_Y_hat)
+
+    getAucPerMonth(gbdt_predict_test_data_path)
