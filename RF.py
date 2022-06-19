@@ -4,7 +4,7 @@
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, mean_squared_error, r2_score, roc_auc_score, classification_report
 from time import time
 import numpy as np
 import pandas as pd
@@ -12,11 +12,17 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mnist
 import roc
+from tools.datasets.getData import getSplitFinacialData
 
 if __name__ == "__main__":
     # 读取Mnist数据集, 测试随机森林(Random Forest)的分类模型
-    mnistSet = mnist.loadLecunMnistSet()
-    train_X, train_Y, test_X, test_Y = mnistSet[0], mnistSet[1], mnistSet[2], mnistSet[3]
+    # mnistSet = mnist.loadLecunMnistSet()
+    # train_X, train_Y, test_X, test_Y = mnistSet[0], mnistSet[1], mnistSet[2], mnistSet[3]
+    train_data_path = "data/train_data.csv"
+    test_data_path = "data/test_data.csv"
+    decision_tree_predict_test_data_path = "data/decision_tree_predict_test_data.csv"
+    train_data_X, train_data_Y = getSplitFinacialData(train_data_path)
+    train_X, test_X, train_Y, test_Y = train_test_split(train_data_X, train_data_Y, test_size=0.2, random_state=0)
 
     m, n = np.shape(train_X)
     idx = list(range(m))
@@ -33,21 +39,21 @@ if __name__ == "__main__":
 
     print("\n**********测试RandomForestClassifier类**********")
     t = time()
-    # param_grid1 = {"n_estimators": range(1000, 2001, 100)}
-    # param_grid2 = {'max_depth': range(30, 71, 10), 'min_samples_split': range(4, 9, 2)}
-    # param_grid3 = {'min_samples_split': range(4, 9, 2), 'min_samples_leaf': range(3, 12, 2)}
-    # model = GridSearchCV(
-    #     estimator=RandomForestClassifier(max_features=90, n_estimators=1300, max_depth=30, min_samples_split=6),
-    #     param_grid=param_grid3, cv=3)
-    # # 拟合训练数据集
+    param_grid1 = {"n_estimators": range(1000, 2001, 100)}
+    param_grid2 = {'max_depth': range(30, 71, 10), 'min_samples_split': range(4, 9, 2)}
+    param_grid3 = {'min_samples_split': range(4, 9, 2), 'min_samples_leaf': range(3, 12, 2)}
+    model = GridSearchCV(
+        estimator=RandomForestClassifier(max_features=90, n_estimators=1300, max_depth=30, min_samples_split=6),
+        param_grid=param_grid3, cv=3)
+    # 拟合训练数据集
     # model.fit(train_X, train_Y)
-    # print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_)
-    model = RandomForestClassifier(max_features=90, n_estimators=1300, max_depth=30, min_samples_split=4,
+    # print("最好的参数是:%s, 此时的得分是:%0.2f" % (model.best_params_, model.best_score_))
+    model = RandomForestClassifier(max_features=38, n_estimators=1300, max_depth=30, min_samples_split=4,
                                    min_samples_leaf=1)
     # 拟合训练数据集
-    model.fit(train_X, train_Y)
+    model.fit(train_X, train_Y.values.ravel())
     # 预测训练集
-    train_Y_hat = model.predict(train_X[idx])
+    train_Y_hat = model.predict(train_X)
     print("训练集精确度: ", accuracy_score(train_Y[idx], train_Y_hat))
     # 预测测试集
     test_Y_hat = model.predict(test_X)
@@ -57,21 +63,38 @@ if __name__ == "__main__":
     n_class = len(np.unique(train_Y))
     roc.drawROC(n_class, test_Y, test_Y_hat)
 
-    # 读取CCPP数据集, 测试随机森林(Random Forest)的回归模型
-    data = pd.read_excel("data/CCPP/Folds5x2_pp.xlsx")
-    # AT:温度, V:压力, AP:湿度, RH:压强, PE:输出电力
-    # 样本特征X
-    X = data[['AT', 'V', 'AP', 'RH']]
-    # 数据归一化
-    X = StandardScaler().fit_transform(X)
-    # 样本输出Y
-    Y = data[['PE']]
-    # 划分训练集和测试集，将数据集的70%划入训练集，30%划入测试集
-    train_X, test_X, train_Y, test_Y = train_test_split(X, Y, test_size=0.3, random_state=1)
 
-    m, n = np.shape(train_X)
-    idx = range(m)
-    np.random.shuffle(idx)
+    # Results
+    test_data_X, test_data_Y = getSplitFinacialData(test_data_path)
+    test_data_Y_hat = model.predict(test_data_X)
+
+    t1, t2 = np.shape(test_data_X)
+    print("t1, t2:\n", t1, ",", t2)
+
+    proba_Y = model.predict_proba(test_data_X)[:, 1]
+
+    auc = roc_auc_score(test_data_Y, proba_Y)
+    print("decisition tree的AUC:", auc)
+    print(classification_report(test_data_Y, test_data_Y_hat, digits=4))
+
+
+
+
+    # 读取CCPP数据集, 测试随机森林(Random Forest)的回归模型
+    # data = pd.read_excel("data/CCPP/Folds5x2_pp.xlsx")
+    # # AT:温度, V:压力, AP:湿度, RH:压强, PE:输出电力
+    # # 样本特征X
+    # X = data[['AT', 'V', 'AP', 'RH']]
+    # # 数据归一化
+    # X = StandardScaler().fit_transform(X)
+    # # 样本输出Y
+    # Y = data[['PE']]
+    # # 划分训练集和测试集，将数据集的70%划入训练集，30%划入测试集
+    # train_X, test_X, train_Y, test_Y = train_test_split(X, Y, test_size=0.3, random_state=1)
+    #
+    # m, n = np.shape(train_X)
+    # idx = range(m)
+    # np.random.shuffle(idx)
 
     # print("\n**********测试RandomForestRegressor类**********"
     # t = time()
