@@ -16,7 +16,6 @@ if __name__ == "__main__":
     # train_X, train_Y, test_X, test_Y = mnistSet[0], mnistSet[1], mnistSet[2], mnistSet[3]
     train_data_path = "data/train_data.csv"
     test_data_path = "data/test_data.csv"
-    decision_tree_predict_test_data_path = "data/decision_tree_predict_test_data.csv"
     gbdt_predict_test_data_path = "data/gbdt_predict_test_data.csv"
     train_data_X, train_data_Y = getSplitFinacialData(train_data_path)
     train_X, test_X, train_Y, test_Y = train_test_split(train_data_X, train_data_Y, test_size=0.2, random_state=0)
@@ -85,7 +84,7 @@ if __name__ == "__main__":
     test_data_Y_hat = model.predict(test_data_X)
 
     t1, t2 = np.shape(test_data_X)
-    print("t1, t2:\n", p, ",", q)
+    print("t1, t2:\n", t1, ",", t2)
 
     proba_Y = model.predict_proba(test_data_X)[:,1]
 
@@ -109,7 +108,7 @@ if __name__ == "__main__":
     label_data = pd.DataFrame({"predict_label": test_data_Y_hat, "probability": proba_Y})
     # label_data = pd.DataFrame({"predict_label": test_Y_hat})
     data = pd.concat([test_data, label_data], axis=1)
-    data.to_csv("data/decision_tree_predict_test_data.csv", encoding="utf-8-sig", index=False)
+    data.to_csv("data/gbdt_tree_predict_test_data.csv", encoding="utf-8-sig", index=False)
 
 
     # 绘制ROC曲线

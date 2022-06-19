@@ -1,17 +1,17 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-from sklearn.svm import SVC, NuSVC, LinearSVC, SVR, NuSVR, LinearSVR
-from sklearn.model_selection import GridSearchCV, train_test_split, cross_val_predict
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, mean_squared_error
 from time import time
+
 import numpy as np
 import pandas as pd
-import operator
-import mnist
+from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.svm import LinearSVC
+
 import roc
 from tools.datasets.getData import getSplitFinacialData
+from tools.metrics import getAucPerMonth
 
 if __name__ == "__main__":
     np.set_printoptions(linewidth=200, edgeitems=10)
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     train_data_path = "data/train_data.csv"
     test_data_path = "data/test_data.csv"
-    decision_tree_predict_test_data_path = "data/decision_tree_predict_test_data.csv"
+    svm_predict_test_data_path = "data/svm_predict_test_data.csv"
     train_data_X, train_data_Y = getSplitFinacialData(train_data_path)
     train_X, test_X, train_Y, test_Y = train_test_split(train_data_X, train_data_Y, test_size=0.2, random_state=0)
 
@@ -59,7 +59,28 @@ if __name__ == "__main__":
     n_class = len(np.unique(train_Y))
     roc.drawROC(n_class, test_Y, test_Y_hat)
 
+    test_data_X, test_data_Y = getSplitFinacialData(test_data_path)
+    test_data_Y_hat = model.predict(test_data_X)
 
+    t1, t2 = np.shape(test_data_X)
+    print("t1, t2:\n", t1, ",", t2)
+
+    proba_Y = model.predict_proba(test_data_X)[:, 1]
+
+    auc = roc_auc_score(test_data_Y, proba_Y)
+
+    # 输出预测文件
+    test_data = pd.DataFrame(pd.read_csv("data/test_data.csv"))
+    label_data = pd.DataFrame({"predict_label": test_data_Y_hat, "probability": proba_Y})
+    # label_data = pd.DataFrame({"predict_label": test_Y_hat})
+    data = pd.concat([test_data, label_data], axis=1)
+    data.to_csv("data/svm_predict_test_data.csv", encoding="utf-8-sig", index=False)
+
+    # 绘制ROC曲线
+    n_class = len(np.unique(train_Y))
+    roc.drawROC(n_class, test_data_Y, test_data_Y_hat)
+
+    getAucPerMonth(svm_predict_test_data_path)
 
     # print("\n**********测试SVC类**********")
     # t = time()
