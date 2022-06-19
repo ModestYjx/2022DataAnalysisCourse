@@ -20,7 +20,7 @@ if __name__ == "__main__":
     train_X, train_Y, test_X, test_Y = mnistSet[0], mnistSet[1], mnistSet[2], mnistSet[3]
 
     m, n = np.shape(train_X)
-    idx = range(m)
+    idx = list(range(m))
 
     # 数据归一化
     # for i in range(int(np.ceil(1.0*m/num))):
@@ -31,8 +31,7 @@ if __name__ == "__main__":
 
     np.random.shuffle(idx)
 
-    print
-    "\n**********测试LinearSVC类**********"
+    print("\n**********测试LinearSVC类**********")
     t = time()
     # model = GridSearchCV(LinearSVC(), param_grid={"C": np.logspace(-10, 0, 11)}, cv=5)
     # model.fit(train_X, train_Y)
@@ -44,20 +43,16 @@ if __name__ == "__main__":
 
     # 预测训练集
     train_Y_hat = model.predict(train_X[idx])
-    print
-    "训练集精确度: ", accuracy_score(train_Y[idx], train_Y_hat)
+    print("训练集精确度: ", accuracy_score(train_Y[idx], train_Y_hat))
     # 预测测试集
     test_Y_hat = model.predict(test_X)
-    print
-    "测试集精确度: ", accuracy_score(test_Y, test_Y_hat)
-    print
-    "总耗时:", time() - t, "秒"
+    print("测试集精确度: ", accuracy_score(test_Y, test_Y_hat))
+    print("总耗时:", time() - t, "秒")
     # 绘制ROC曲线
     # n_class = len(np.unique(train_Y))
     # roc.drawROC(n_class, test_Y, test_Y_hat)
 
-    print
-    "\n**********测试SVC类**********"
+    print("\n**********测试SVC类**********")
     t = time()
     # 分批处理时每次的样本数
     num = 10000
@@ -83,8 +78,7 @@ if __name__ == "__main__":
             paramVal = item.split(":")
             if not bestParams.has_key(paramVal[0]):
                 bestParams[paramVal[0]] = paramVal[1]
-    print
-    "最好的参数是:", bestParams
+    print("最好的参数是:", bestParams)
 
     # model = GridSearchCV(SVC(cache_size=1000),
     #                      param_grid={"C": np.logspace(-3, 3, 7), "gamma": np.logspace(-10, 0, 11)}, cv=5)
@@ -97,19 +91,15 @@ if __name__ == "__main__":
 
     # 预测训练集
     train_Y_hat = model.predict(train_X[idx])
-    print
-    "训练集精确度: ", accuracy_score(train_Y[idx], train_Y_hat)
+    print("训练集精确度: ", accuracy_score(train_Y[idx], train_Y_hat))
     # 预测测试集
     test_Y_hat = model.predict(test_X)
-    print
-    "测试集精确度: ", accuracy_score(test_Y, test_Y_hat)
-    print
-    "总耗时:", time() - t, "秒"
+    print("测试集精确度: ", accuracy_score(test_Y, test_Y_hat))
+    print("总耗时:", time() - t, "秒")
     # 绘制ROC曲线
     # roc.drawROC(n_class, test_Y, test_Y_hat)
 
-    print
-    "\n**********测试NuSVC类**********"
+    print("\n**********测试NuSVC类**********")
     t = time()
     model = GridSearchCV(NuSVC(cache_size=1000), param_grid={"nu": np.linspace(0.1, 1, 10),
                                                              "gamma": np.logspace(-3, 3, 7)}, cv=5)
@@ -121,14 +111,11 @@ if __name__ == "__main__":
     model.fit(train_X, train_Y)
     # 预测训练集
     train_Y_hat = model.predict(train_X[idx])
-    print
-    "训练集精确度: ", accuracy_score(train_Y[idx], train_Y_hat)
+    print("训练集精确度: ", accuracy_score(train_Y[idx], train_Y_hat))
     # 预测测试集
     test_Y_hat = model.predict(test_X)
-    print
-    "测试集精确度: ", accuracy_score(test_Y, test_Y_hat)
-    print
-    "总耗时:", time() - t, "秒"
+    print("测试集精确度: ", accuracy_score(test_Y, test_Y_hat))
+    print("总耗时:", time() - t, "秒")
     # 绘制ROC曲线
     # roc.drawROC(n_class, test_Y, test_Y_hat)
 
@@ -148,8 +135,7 @@ if __name__ == "__main__":
     idx = range(m)
     np.random.shuffle(idx)
 
-    print
-    "\n**********测试LinearSVR类**********"
+    print("\n**********测试LinearSVR类**********")
     t = time()
     model = GridSearchCV(LinearSVR(), param_grid={"C": np.logspace(-3, 3, 7)}, cv=5)
     model.fit(train_X, train_Y.values.ravel())
@@ -163,15 +149,11 @@ if __name__ == "__main__":
     # print model.coef_
     # 预测测试集
     test_Y_pred = model.predict(test_X)
-    print
-    "测试集MSE:", mean_squared_error(test_Y, test_Y_pred)
-    print
-    "测试集RMSE:", np.sqrt(mean_squared_error(test_Y, test_Y_pred))
-    print
-    "总耗时:", time() - t, "秒"
+    print("测试集MSE:", mean_squared_error(test_Y, test_Y_pred))
+    print("测试集RMSE:", np.sqrt(mean_squared_error(test_Y, test_Y_pred)))
+    print("总耗时:", time() - t, "秒")
 
-    print
-    "\n**********测试SVR类**********"
+    print("\n**********测试SVR类**********")
     t = time()
     model = GridSearchCV(SVR(cache_size=1000), param_grid={"C": np.logspace(-3, 3, 7), "gamma": np.logspace(-3, 3, 7),
                                                            "epsilon": np.logspace(-3, 3, 7)}, cv=5)
@@ -186,15 +168,11 @@ if __name__ == "__main__":
     # print model.dual_coef_
     # 预测测试集
     test_Y_pred = model.predict(test_X)
-    print
-    "测试集MSE:", mean_squared_error(test_Y, test_Y_pred)
-    print
-    "测试集RMSE:", np.sqrt(mean_squared_error(test_Y, test_Y_pred))
-    print
-    "总耗时:", time() - t, "秒"
+    print("测试集MSE:", mean_squared_error(test_Y, test_Y_pred))
+    print("测试集RMSE:", np.sqrt(mean_squared_error(test_Y, test_Y_pred)))
+    print("总耗时:", time() - t, "秒")
 
-    print
-    "\n**********测试NuSVR类**********"
+    print("\n**********测试NuSVR类**********")
     t = time()
     model = GridSearchCV(NuSVR(cache_size=1000), param_grid={"C": np.logspace(-3, 3, 7), "nu": np.linspace(0.1, 1, 10),
                                                              "gamma": np.logspace(-3, 3, 7)}, cv=5)
@@ -209,9 +187,6 @@ if __name__ == "__main__":
     # print model.dual_coef_
     # 预测测试集
     test_Y_pred = model.predict(test_X)
-    print
-    "测试集MSE:", mean_squared_error(test_Y, test_Y_pred)
-    print
-    "测试集RMSE:", np.sqrt(mean_squared_error(test_Y, test_Y_pred))
-    print
-    "总耗时:", time() - t, "秒"
+    print("测试集MSE:", mean_squared_error(test_Y, test_Y_pred))
+    print("测试集RMSE:", np.sqrt(mean_squared_error(test_Y, test_Y_pred)))
+    print("总耗时:", time() - t, "秒")
